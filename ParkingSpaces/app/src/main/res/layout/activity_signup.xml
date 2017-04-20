@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/register_main">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/registration_background" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:text="Register"
+            android:textColor="#000000"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:paddingTop="50dp" />
+
+        <!--  First Name Label -->
+        <EditText
+            android:id="@+id/input_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:drawableLeft="@drawable/user"
+            android:hint="First Name"
+            android:textColor="#000000"
+            android:fontFamily="sans-serif-medium"
+            android:inputType="textCapWords"
+            android:padding="2dp" />
+
+        <!--  Last Name Label -->
+        <EditText android:id="@+id/input_last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:padding="2dp"
+            android:inputType="textCapWords"
+            android:hint="Last Name"
+            android:textColor="#000000"
+            android:fontFamily="sans-serif-medium"
+            android:drawableLeft="@drawable/user" />
+
+        <!-- Email Label -->
+        <EditText android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:padding="3dp"
+            android:inputType="textEmailAddress"
+            android:hint="Email"
+            android:textColor="#000000"
+            android:fontFamily="sans-serif-medium"
+            android:drawableLeft="@drawable/email"/>
+
+        <!-- Password Label -->
+        <EditText
+            android:id="@+id/input_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:drawableLeft="@drawable/password"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:padding="3dp"
+            android:textColor="#000000"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- Signup Button -->
+        <Button
+            android:id="@+id/btn_signup"
+            android:onClick="onClickCreateAccount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:background="@drawable/register_button"
+            android:textColor="#ffffff"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="18dp"
+            android:text="Create Account"/>
+
+        <TextView
+            android:id="@+id/link_login"
+            android:onClick="onClickRememberAccount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="Already a member? Login"
+            android:textColor="#000000"
+            android:textSize="14dp"
+            android:typeface="monospace"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/register_imview" />
+
+</RelativeLayout>
