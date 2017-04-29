@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
         boolean valid = true;
 
-        String email = _emailText.getText().toString();
+        /*String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
         else {
             _passwordText.setError(null);
         }
-
+*/
         return valid;
     }
 
