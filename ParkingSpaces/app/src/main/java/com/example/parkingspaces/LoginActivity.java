@@ -1,15 +1,13 @@
 package com.example.parkingspaces;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.app.ProgressDialog;
 
 import android.util.Log;
 
 import android.content.Intent;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Build;
 
 import android.view.View;
 
@@ -17,15 +15,13 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends Activity {
 
     private static final String TAG = "LoginActivity";
     static final int REQUEST_SIGNUP = 0;
 
-    private EditText _emailText;
+    public static EditText _emailText;
     private EditText _passwordText;
-/*
-    private TextView _signupLink;*/
 
     private Button _loginButton;
 
@@ -43,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         login();
     }
 
-   public void onClickSignup(View view) {
+    public void onClickSignup(View view) {
         // Start the Signup activity
         Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
         startActivityForResult(intent, REQUEST_SIGNUP);
@@ -61,37 +57,32 @@ public class LoginActivity extends AppCompatActivity {
         String str = _emailText.getText().toString() + ", " + _passwordText.getText().toString();
         MainActivity.myClientTask.msgToServer = str;
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            MainActivity.myClientTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            MainActivity.myClientTask.execute();
-
         if (!validate(MainActivity.myClientTask)) {
             onLoginFailed();
             return;
         }
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+        /*final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
-
+*/
         // Authentication logic
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
+       // new android.os.Handler().postDelayed(
+         //       new Runnable() {
+           //         public void run() {
                         onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 1500);
+             //           progressDialog.dismiss();
+               //     }
+                //}, 500);
     }
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
 
         finish();
+       // MainActivity.CheckStatus();
+        MainActivity.myClientTask.msgToServer = "STATE";
     }
 
     public void onLoginFailed() {
@@ -100,24 +91,20 @@ public class LoginActivity extends AppCompatActivity {
         _loginButton.setEnabled(true);
     }
 
+    // This function will check if the server recognizes in the database the authentication data
     public boolean validate(MainActivity.MyClientTask myClientTask) {
-
-        //ESTA FUNÇÃO VAI SER DIFERENTE:!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //apenas vai verificar que a pass e o email batem certo com
-        //o que está guardado no servidor
-
-        //O servidor deve receber:
-        //OK
-        //KO mail    -- se nao existir este email, se existir verificar pass
-        //KO pass
-
         boolean valid = true;
 
-        /*String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        //pode ser retirado? acho que não...
+        while(true){
+            if(!myClientTask.response.equals(""))
+                break;
+        }
+
+        String email = _emailText.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-                || myClientTask.response == "KO_MAIL") {
+                || myClientTask.response.equals("KO_EMAIL")) {
             _emailText.setError("Enter a valid email address...");
             valid = false;
         }
@@ -125,18 +112,20 @@ public class LoginActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
-        if(myClientTask.response.isEmpty()){
-            valid = false;
-        }
-
-        if(myClientTask.response == "KO_PASS"){
+        if(myClientTask.response.equals("KO_PASS")){
             _passwordText.setError("Incorrect password...");
             valid = false;
         }
         else {
             _passwordText.setError(null);
         }
-*/
+
+        if(myClientTask.response.isEmpty() || !myClientTask.response.equals("OK_LOG")){
+            valid = false;
+        }
+
+        myClientTask.response = "";
+
         return valid;
     }
 

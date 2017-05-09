@@ -1,33 +1,28 @@
 package com.example.parkingspaces;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.app.ProgressDialog;
 
 import android.util.Log;
 
 import android.content.Intent;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Build;
 
 import android.view.View;
 
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends Activity {
 
     private static final String TAG = "SignupActivity";
 
     private EditText _nameText;
     private EditText _lastnameText;
-    private EditText _emailText;
+    public static EditText _emailText;
     private EditText _passwordText;
-
-    private TextView _loginLink;
 
     private Button _signupButton;
 
@@ -35,23 +30,23 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        //VER SE IDS COM MESMO NOME EM FICHEIROS XML DIFERENTE FAZ CONFUSAO!!!!
         _nameText = (EditText) findViewById(R.id.input_name);
         _lastnameText = (EditText) findViewById(R.id.input_last_name);
         _emailText = (EditText) findViewById(R.id.input_email);
         _passwordText = (EditText) findViewById(R.id.input_password);
-        _loginLink = (TextView) findViewById(R.id.link_login);
         _signupButton = (Button) findViewById(R.id.btn_signup);
 
     }
 
+    // Create a Account
     public void onClickCreateAccount(View view) {
         signup();
     }
 
+    // Remember Account? Then Login...
     public void onClickRememberAccount(View view) {
         // Finish the registration screen and return to the Login activity
-        Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         // Finish the Login activity
         finish();
@@ -73,10 +68,17 @@ public class SignupActivity extends AppCompatActivity {
                 _emailText.getText().toString() + ", " + _passwordText.getText().toString();
         MainActivity.myClientTask.msgToServer = str;
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            MainActivity.myClientTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            MainActivity.myClientTask.execute();
+        //pode ser retirado? acho que não...
+        while(true){
+            if(!MainActivity.myClientTask.response.equals(""))
+                break;
+        }
+
+        if(!MainActivity.myClientTask.response.equals("OK_SINGUP")) {
+            MainActivity.myClientTask.response = "";
+            onSignupFailed();
+            return;
+        }
 
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this);
         progressDialog.setIndeterminate(true);
@@ -87,18 +89,17 @@ public class SignupActivity extends AppCompatActivity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
                         onSignupSuccess();
-                        // onSignupFailed();
                         progressDialog.dismiss();
                     }
-                }, 1500);
+                }, 500);
     }
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
+
+        //MainActivity.CheckStatus();
 
         finish();
     }
@@ -117,16 +118,34 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("At least 3 characters...");
+        char c;
+        int d = 0, l = 0, u = 0;
+
+        for(int i = 0; i < name.length(); i++){
+            c = name.charAt(i);
+
+            if(Character.isDigit(c))
+                d++;
+        }
+
+        if (name.isEmpty() || name.length() < 3 || d > 0) {
+            _nameText.setError("At least 3 characters e/ou contain numbers...");
             valid = false;
         }
         else {
             _nameText.setError(null);
         }
 
-        if (lastname.isEmpty() || lastname.length() < 3) {
-            _lastnameText.setError("At least 3 characters...");
+        d = 0;
+        for(int i = 0; i < lastname.length(); i++){
+            c = lastname.charAt(i);
+
+            if(Character.isDigit(c))
+                d++;
+        }
+
+        if (lastname.isEmpty() || lastname.length() < 3 || d > 0) {
+            _lastnameText.setError("At least 3 characters e/ou contain numbers...");
             valid = false;
         }
         else {
@@ -141,8 +160,7 @@ public class SignupActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
-        char c;
-        int d = 0, l = 0, u = 0;
+        d = 0;
         for(int i = 0; i < password.length(); i++){
             c = password.charAt(i);
 
@@ -169,14 +187,9 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-        //finishAffinity();
-        //super.onBackPressed();
-        // Finish the registration screen and return to the Login activity
         Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
         startActivity(intent);
-        // Finish the Login activity
         finish();
-        // Specify an explicit transition animation to perform next
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:background="#ececec">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Manage Reservation"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        android:layout_weight="0.05" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Enter your reservation details."
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-medium"/>
+
+    <!-- License plate -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="License Plate:"
+        android:textSize="16dp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"/>
+
+    <EditText
+        android:id="@+id/input_license_plate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint=""
+        android:textSize="16dp"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-medium"
+        android:inputType="textCapWords"
+        android:padding="2dp" />
+
+    <!-- Standby time -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Standby Time:"
+        android:textSize="16dp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"/>
+
+    <!-- Spinner Dropdown -->
+    <Spinner
+        android:id="@+id/input_standby_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:entries="@array/time_array"
+        android:fontFamily="sans-serif-medium"
+        android:inputType="textCapWords"
+        android:padding="2dp"
+        android:textColor="#000000" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="40dp"
+        android:weightSum="1.0">
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:onClick="onClickOk"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="4dp"
+            android:text="OK"
+            android:textColor="#ffffff"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="18dp"
+            android:background="@drawable/register_button"/>
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:onClick="onClickCancel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_gravity="right"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="10dp"
+            android:text="Cancel"
+            android:textColor="#ffffff"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="18dp"
+            android:background="@drawable/register_button"/>
+
+    </LinearLayout>
+
+</LinearLayout>

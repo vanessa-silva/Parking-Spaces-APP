@@ -1,21 +1,21 @@
 package com.example.parkingspaces;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Build;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 
+import android.content.Context;
 import android.content.Intent;
 
-import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -26,33 +26,37 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity{
 
-    private static Socket socket;
-    static MyClientTask myClientTask;
+    private static Context context;
+
+    public static boolean start_here;
+
+    static MyClientTask myClientTask = null;
 
     private static final int SERVER_PORT = 5000;
     private static final String SERVER_IP = "10.0.2.2";
 
-    private static boolean reserve = false;                 //To know if I should give a "I arrived"
+    public static boolean reserve;                 // To know if I should give a "I arrived"
 
-    private static boolean fire = false;                    //Label to see if there is fire or not
+    public static Button _reserveButton;
+    public static Button _arrivedButton;
 
-    private Button _reserveButton;
-    private Button _arrivedButton;
+    private static TextView _stringState;
 
-    private EditText _licensePlate;
-    private EditText _standbyTime;
+    private static ImageView _imagState;
 
-    private MyDialogFragmentReserve dialogFragment;
-    private MyDialogFragmentFire dialogFragmentFire;
+    private static MyDialogFragmentFire dialogFragmentFire;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myClientTask = new MyClientTask("");
+        MainActivity.context = getApplicationContext();
+
+        myClientTask = new MyClientTask();
+        myClientTask.start();
 
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
@@ -60,121 +64,150 @@ public class MainActivity extends AppCompatActivity {
         _reserveButton = (Button) findViewById(R.id.btn_reserve);
         _arrivedButton = (Button) findViewById(R.id.btn_arrived);
 
-        _licensePlate = (EditText) findViewById(R.id.input_license_plate);
-        _standbyTime = (EditText) findViewById(R.id.input_standby_time);
+        _stringState = (TextView) findViewById(R.id.stateString);
 
-        //_arrivedButton.setEnabled(false);
+        _imagState = (ImageView) findViewById(R.id.state);
+
+        reserve = false;
+
+        start_here = false;
+
+        _reserveButton.setEnabled(false);                   // Initially I can not make reservation soon, before I know the status
+        _arrivedButton.setEnabled(false);                   // Initially I can not say "I arrived" because there is no reservation
+    }
+
+    public static Context getAppContext() {
+        return MainActivity.context;
+    }
+
+    public static void CheckStatus() {
+       // myClientTask.msgToServer = "STATE";
+
+        //pode ser retirado? acho que não...
+        /*while(true){
+            if(!myClientTask.response.equals(""))
+                break;
+        }*/
+
+       // myClientTask.msgToServer = "OLA " + myClientTask.response + "   AQUI";
+/*
+        if (myClientTask.response.equals("FREE")) {
+            stateFree();
+        } else if (myClientTask.response.equals("RESERVED")) {
+            stateReserved();
+        } else if (myClientTask.response.equals("BUSY")) {
+            stateBusy();
+        } else {
+            Toast.makeText(MainActivity.getAppContext(), "Connection failed...", Toast.LENGTH_LONG).show();
+
+            final ProgressDialog progressDialog = new ProgressDialog(MainActivity.getAppContext());
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Reconnecting...");
+            progressDialog.show();
+
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            MainActivity.CheckStatus();
+                            progressDialog.dismiss();
+                        }
+                    }, 800);
+        }
+
+        myClientTask.response = "";
+
+        start_here = true;*/
+    }
+
+    public static void stateFree() {
+        _imagState.setImageDrawable(context.getResources().getDrawable(R.drawable.green));
+        _stringState.setText("'Free'");
+
+        _reserveButton.setEnabled(true);
+        _arrivedButton.setEnabled(false);
+    }
+
+    public static void stateReserved() {
+        _imagState.setImageDrawable(context.getResources().getDrawable(R.drawable.yellow));
+        _stringState.setText("'Reserved'");
+
+        if(reserve) {
+            _reserveButton.setEnabled(false);
+            _arrivedButton.setEnabled(true);
+        }
+        else {
+            _reserveButton.setEnabled(false);
+            _arrivedButton.setEnabled(false);
+        }
+    }
+
+    public static void stateBusy() {
+        _imagState.setImageDrawable(context.getResources().getDrawable(R.drawable.red));
+        _stringState.setText("'Busy'");
+
+        _reserveButton.setEnabled(false);
+        _arrivedButton.setEnabled(false);
     }
 
     public void onClickReserve(View view) {
-        FragmentManager fm = getFragmentManager();
-        dialogFragment = new MyDialogFragmentReserve();
-        dialogFragment.show(fm, "Manage Reservation");
+        Intent intent = new Intent(this, ReserveManag.class);
+        startActivity(intent);
     }
 
     public void onClickArrived(View view) {
-        //Enviar mensagem para o servido para ele "avisar" o arduino da chegada e atualizar respetivos androids,
-        // para comprovativo de que sou "eu", envio a matricula do carro
 
-        FragmentManager fm = getFragmentManager();
-        dialogFragmentFire = new MyDialogFragmentFire();
-        dialogFragmentFire.show(fm, "Manage Reservation");
+        String str = "";
 
-        /*String str = _licensePlate.getText().toString();
+        if(LoginActivity._emailText.getText().toString().contains("@"))
+            str = "ARRIVED, " + LoginActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
+        else if (SignupActivity._emailText.getText().toString().contains("@"))
+            str = "ARRIVED, " + SignupActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
+        else {
+            onArrivedFailed();
+            return;
+        }
+
         myClientTask.msgToServer = str;
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            myClientTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            myClientTask.execute();
-
-        //Provavelmente isto dialog pode ser retirado:
         final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Sending...");
         progressDialog.show();
-        progressDialog.dismiss();       //?
 
-        _arrivedButton.setEnabled(false);*/
-
-    }
-
-    public void onClickOk(View view) {
-        //colocar variavel de reserva booliana a TRUE e enviar para o servidor para desativar tudo e avisar tudo
-
-        if (!validate()) {
-            onReserveFailed();
-            return;
-        }
-
-        reserve = true;
-        _reserveButton.setEnabled(false);
-        _arrivedButton.setEnabled(true);
-
-        String str = _licensePlate.getText().toString() + ", " + _standbyTime.getText().toString();
-        myClientTask.msgToServer = str;
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            myClientTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            myClientTask.execute();
-
-        //Pode ser tirado
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Sending Data...");
-        progressDialog.show();
-
-        // Register reserve
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onReserveSuccess();
-                        // onSignupFailed();
+                        if(myClientTask.response.equals("OK"))
+                            onArrivedSuccess();
+                        else
+                            onArrivedFailed();
                         progressDialog.dismiss();
                     }
                 }, 1000);
 
     }
 
-    public void onClickCancel(View view) {
+    public void onArrivedSuccess() {
+        reserve = false;
+        stateFree();
         // return to main activity and do nothing
-        dialogFragment.dismiss();
+        //dialogFragment.dismiss();
     }
 
-    public void onReserveSuccess() {
-        // return to main activity and do nothing
-        dialogFragment.dismiss();
+    public void onArrivedFailed() {
+        Toast.makeText(getBaseContext(), "Sending failed...", Toast.LENGTH_LONG).show();
+
+        _reserveButton.setEnabled(false);
+        _arrivedButton.setEnabled(true);
     }
 
-    public void onReserveFailed() {
-        Toast.makeText(getBaseContext(), "Reserve failed...", Toast.LENGTH_LONG).show();
-
-        _reserveButton.setEnabled(true);
-        _arrivedButton.setEnabled(false);
+    public void fireOn() {
+        FragmentManager fm = getFragmentManager();
+        dialogFragmentFire = new MyDialogFragmentFire();
+        dialogFragmentFire.show(fm, "FIRE");
     }
 
-    public boolean validate() {
-        boolean valid = true;
-
-        //Verificar formato da matricula e do tempo de reserva
-        //O TEMPO DE RESREVA ate poderia por um escolher tempo uma vez que ESTE TEMPO DEVE TER LIMIT MINIMO E MÁXIMO
-
-        return valid;
-    }
-
-    class MyDialogFragmentReserve extends DialogFragment {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_dialog_reserve, container, false);
-            getDialog().setTitle("Manage Reservation");
-            return rootView;
-        }
-    }
-
-    class MyDialogFragmentFire extends DialogFragment {
+    static class MyDialogFragmentFire extends DialogFragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_dialog_fire, container, false);
@@ -183,44 +216,61 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    static class MyClientTask extends AsyncTask<Void, Void, Void> {
 
+    public static class MyClientTask extends Thread {
         String dstAddress = MainActivity.SERVER_IP;
         int dstPort = MainActivity.SERVER_PORT;
-        String response = "";               //Message from server
+        String response;                    //Message from server
         String msgToServer;                 //Message to server
 
-        //constructor
-        MyClientTask(String msgTo) {
-            msgToServer = msgTo;
+        boolean aqui = false;
+
+        MyClientTask() {
+            response = "";
+            msgToServer = "";
         }
 
-        protected Void doInBackground(Void... arg0) {
-
-            socket = null;
+        @Override
+        public void run() {
+            Socket socket = null;
             DataOutputStream dataOutputStream = null;
             DataInputStream dataInputStream = null;
 
             try {
                 socket = new Socket(dstAddress, dstPort);
-
                 dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 dataInputStream = new DataInputStream(socket.getInputStream());
 
-                if(msgToServer != null){
-                    dataOutputStream.writeUTF(msgToServer);
+                while (true) {
+
+                    if (dataInputStream.available() > 0) {
+                        response = dataInputStream.readUTF();
+
+                        /*if(MainActivity.start_here) {
+
+                        }*/
+                    }
+
+                    if (aqui) {
+                        msgToServer = "Ola111...";
+                        MainActivity.stateReserved();
+                        aqui = false;
+                    }
+
+                    if (!msgToServer.equals("")) {
+                        dataOutputStream.writeUTF(msgToServer);
+                        dataOutputStream.flush();
+
+                        if(msgToServer.equals("STATE"))
+                            aqui = true;
+                        else
+                            msgToServer = "";
+                    }
                 }
-
-                response = dataInputStream.readUTF();
-
             } catch (UnknownHostException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
-                //response = "UnknownHostException: " + e.toString();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
-                //response = "IOException: " + e.toString();
             } finally {
                 if (socket != null) {
                     try {
@@ -249,15 +299,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            return null;
         }
-
-        protected void onPostExecute(Void result) {
-            // Code for a message received by the server in our space (Text View (if you have one)):
-            //(Test View) textResponse.setText(response);
-            super.onPostExecute(result);
-        }
-
     }
 
     public void onBackPressed() {
