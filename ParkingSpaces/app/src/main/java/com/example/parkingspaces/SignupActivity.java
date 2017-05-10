@@ -68,7 +68,6 @@ public class SignupActivity extends Activity {
                 _emailText.getText().toString() + ", " + _passwordText.getText().toString();
         MainActivity.myClientTask.msgToServer = str;
 
-        //pode ser retirado? acho que não...
         while(true){
             if(!MainActivity.myClientTask.response.equals(""))
                 break;
@@ -92,16 +91,16 @@ public class SignupActivity extends Activity {
                         onSignupSuccess();
                         progressDialog.dismiss();
                     }
-                }, 500);
+                }, 700);
     }
 
     public void onSignupSuccess() {
-        _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
 
-        //MainActivity.CheckStatus();
-
         finish();
+
+        Intent intent2 = new Intent(this, MainStatus.class);
+        startActivity(intent2);
     }
 
     public void onSignupFailed() {

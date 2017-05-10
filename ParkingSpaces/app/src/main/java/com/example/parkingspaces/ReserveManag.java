@@ -29,14 +29,12 @@ public class ReserveManag extends Activity {
 
     public void onClickOk(View view) {
 
-        finish();
-        /*
         if (!validate()) {
             onReserveFailed();
             return;
         }
 
-        MainActivity.reserve = true;
+        MainStatus.reserve = true;
 
         _standbyTime = _spinner.getSelectedItem().toString();
 
@@ -61,14 +59,22 @@ public class ReserveManag extends Activity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        if(MainActivity.myClientTask.response.equals("OK"))
+                        while(true){
+                            if(!MainActivity.myClientTask.response.equals(""))
+                                break;
+                        }
+                        if(MainActivity.myClientTask.response.equals("OK_RESERVE")) {
+                            MainActivity.myClientTask.response = "";
                             onReserveSuccess();
-                        else
+                        }
+                        else {
+                            MainActivity.myClientTask.response = "";
                             onReserveFailed();
+                        }
                         progressDialog.dismiss();
                     }
-                }, 1000);
-*/
+                }, 500);
+
     }
 
     public void onClickCancel(View view) {
@@ -76,7 +82,7 @@ public class ReserveManag extends Activity {
     }
 
     public void onReserveSuccess() {
-        MainActivity.stateReserved();
+        MainStatus.stateReserved();
 
         finish();
     }
@@ -84,8 +90,8 @@ public class ReserveManag extends Activity {
     public void onReserveFailed() {
         Toast.makeText(getBaseContext(), "Reserve failed...", Toast.LENGTH_LONG).show();
 
-        MainActivity._reserveButton.setEnabled(true);
-        MainActivity._arrivedButton.setEnabled(false);
+        MainStatus._reserveButton.setEnabled(true);
+        MainStatus._arrivedButton.setEnabled(false);
     }
 
     public boolean validate() {

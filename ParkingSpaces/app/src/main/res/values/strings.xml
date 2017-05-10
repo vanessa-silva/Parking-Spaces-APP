@@ -15,6 +15,10 @@
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">Cancel</string>
 
+    <string name="btn_reserve">Reserve</string>
+    <string name="btn_arrived">I Arrived</string>
+    <string name="btn_cancel_reservation">Cancel reservation?</string>
+
     <string-array name="time_array">
         <item>1 min</item>
         <item>2 mins</item>

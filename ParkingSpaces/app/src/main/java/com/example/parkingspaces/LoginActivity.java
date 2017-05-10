@@ -62,27 +62,26 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        /*final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
-*/
+
         // Authentication logic
-       // new android.os.Handler().postDelayed(
-         //       new Runnable() {
-           //         public void run() {
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
                         onLoginSuccess();
-             //           progressDialog.dismiss();
-               //     }
-                //}, 500);
+                        progressDialog.dismiss();
+                    }
+                }, 700);
     }
 
     public void onLoginSuccess() {
-        _loginButton.setEnabled(true);
-
         finish();
-       // MainActivity.CheckStatus();
-        MainActivity.myClientTask.msgToServer = "STATE";
+
+        Intent intent2 = new Intent(this, MainStatus.class);
+        startActivity(intent2);
     }
 
     public void onLoginFailed() {
@@ -95,7 +94,6 @@ public class LoginActivity extends Activity {
     public boolean validate(MainActivity.MyClientTask myClientTask) {
         boolean valid = true;
 
-        //pode ser retirado? acho que não...
         while(true){
             if(!myClientTask.response.equals(""))
                 break;
