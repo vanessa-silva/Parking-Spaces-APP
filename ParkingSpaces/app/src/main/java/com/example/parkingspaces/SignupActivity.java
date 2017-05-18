@@ -64,7 +64,7 @@ public class SignupActivity extends Activity {
 
         _signupButton.setEnabled(false);
 
-        String str = _nameText.getText().toString() + ", " + _lastnameText.getText().toString() + ", " +
+        String str = "INS_USER " + _nameText.getText().toString() + ", " + _lastnameText.getText().toString() + ", " +
                 _emailText.getText().toString() + ", " + _passwordText.getText().toString();
         MainActivity.myClientTask.msgToServer = str;
 
