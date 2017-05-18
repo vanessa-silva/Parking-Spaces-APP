@@ -121,7 +121,7 @@ public class MainActivity extends Activity{
                     }
 
                     if (!msgToServer.equals("")) {
-                        dataOutputStream.writeUTF(msgToServer);
+                        dataOutputStream.write(msgToServer.getBytes("UTF-8"));
                         dataOutputStream.flush();
                         msgToServer = "";
                     }
