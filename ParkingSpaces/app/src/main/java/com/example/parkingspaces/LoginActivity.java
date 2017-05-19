@@ -54,7 +54,7 @@ public class LoginActivity extends Activity {
 
         _loginButton.setEnabled(false);
 
-        String str = _emailText.getText().toString() + ", " + _passwordText.getText().toString();
+        String str = "GET_USER "+_emailText.getText().toString() + ", " + _passwordText.getText().toString();
         MainActivity.myClientTask.msgToServer = str;
 
         if (!validate(MainActivity.myClientTask)) {

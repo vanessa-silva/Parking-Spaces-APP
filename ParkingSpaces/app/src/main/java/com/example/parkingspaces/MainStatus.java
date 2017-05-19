@@ -30,7 +30,7 @@ public class MainStatus extends Activity{
     public static Button _arrivedButton;
     public static Button _cancelReservationButton;
 
-    private static TextView _stringState;
+    private static Button _stringState;
 
     private static ImageView _imagState;
 
@@ -47,7 +47,7 @@ public class MainStatus extends Activity{
         _arrivedButton = (Button) findViewById(R.id.btn_arrived);
         _cancelReservationButton = (Button) findViewById(R.id.btn_cancel_reservation);
 
-        _stringState = (TextView) findViewById(R.id.stateString);
+        _stringState = (Button) findViewById(R.id.stateString);
 
         _imagState = (ImageView) findViewById(R.id.state);
 
@@ -57,7 +57,7 @@ public class MainStatus extends Activity{
 
         _currentState = "";
 
-        MainActivity.myClientTask.msgToServer = "STATE";
+        MainActivity.myClientTask.msgToServer = "GET_STATE PARK";
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -91,7 +91,7 @@ public class MainStatus extends Activity{
                     new Runnable() {
                         public void run() {
                             MainActivity.myClientTask.response = "";
-                            MainActivity.myClientTask.msgToServer = "STATE";
+                            MainActivity.myClientTask.msgToServer = "GET_STATE PARK";
                             CheckStatus();
                         }
                     }, 500);
@@ -151,9 +151,9 @@ public class MainStatus extends Activity{
         String str = "";
 
         if(LoginActivity._emailText.getText().toString().contains("@"))
-            str = "ARRIVED, " + LoginActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
+            str = "SET_ARRIVED " + LoginActivity._emailText.getText().toString() + "," + ReserveManag._licensePlate.getText().toString();
         else if (SignupActivity._emailText.getText().toString().contains("@"))
-            str = "ARRIVED, " + SignupActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
+            str = "SET_ARRIVED " + SignupActivity._emailText.getText().toString() + "," + ReserveManag._licensePlate.getText().toString();
         else {
             onArrivedFailed();
             return;
@@ -204,9 +204,9 @@ public class MainStatus extends Activity{
         String str = "";
 
         if(LoginActivity._emailText.getText().toString().contains("@"))
-            str = "CANCEL RESERVATION, " + LoginActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
+            str = "CANCEL_BOOKING " + LoginActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
         else if (SignupActivity._emailText.getText().toString().contains("@"))
-            str = "CANCEL RESERVATION, " + SignupActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
+            str = "CANCEL_BOOKING " + SignupActivity._emailText.getText().toString() + ", " + ReserveManag._licensePlate.getText().toString();
         else {
             onCancelReservationFailed();
             return;
@@ -257,12 +257,16 @@ public class MainStatus extends Activity{
         _stringState.setText("'FIRE!!!'");
         _backgroundView.setBackgroundColor(Color.parseColor("#4Dff0000"));
 
+        _stringState.setClickable(true);
         _reserveButton.setClickable(false);
         _arrivedButton.setClickable(false);
         _cancelReservationButton.setClickable(false);
     }
 
     public static void fireOf() {
+        _stringState.setClickable(false);
+        MainActivity.myClientTask.msgToServer = "FIRE_TERMIN PARK";
+
         _backgroundView.setBackground(getAppContext().getResources().getDrawable(R.drawable.register_main));
 
         if (_currentState.equals("free"))

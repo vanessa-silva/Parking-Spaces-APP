@@ -20,9 +20,10 @@
     <string name="btn_cancel_reservation">Cancel reservation?</string>
 
     <string-array name="time_array">
-        <item>1 min</item>
-        <item>2 mins</item>
-        <item>3 mins</item>
+        <item>15</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
     </string-array>
 
 </resources>

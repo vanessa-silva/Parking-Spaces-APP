@@ -69,8 +69,10 @@ public class SignupActivity extends Activity {
         MainActivity.myClientTask.msgToServer = str;
 
         while(true){
-            if(!MainActivity.myClientTask.response.equals(""))
+            if(!MainActivity.myClientTask.response.equals("")){
                 break;
+            }
+
         }
 
         if(!MainActivity.myClientTask.response.equals("OK_SINGUP")) {

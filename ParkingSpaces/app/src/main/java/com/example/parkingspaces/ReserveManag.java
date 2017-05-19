@@ -23,7 +23,7 @@ public class ReserveManag extends Activity {
         setContentView(R.layout.activity_reserve);
 
         _licensePlate = (EditText) findViewById(R.id.input_license_plate);
-        _standbyTime = "1 min";
+        _standbyTime = "15";
         _spinner = (Spinner) findViewById(R.id.input_standby_time);
     }
 
@@ -41,9 +41,9 @@ public class ReserveManag extends Activity {
         String str = "";
 
         if(LoginActivity._emailText.getText().toString().contains("@"))
-            str = "RESERVE, " + LoginActivity._emailText.getText().toString() + ", " + _licensePlate.getText().toString() + ", " + _standbyTime;
+            str = "INS_BOOKING " + LoginActivity._emailText.getText().toString() + "," + _licensePlate.getText().toString() + "," + _standbyTime;
         else if (SignupActivity._emailText.getText().toString().contains("@"))
-            str = "RESERVE, " + SignupActivity._emailText.getText().toString() + ", " + _licensePlate.getText().toString() + ", " + _standbyTime;
+            str = "INS_BOOKING " + SignupActivity._emailText.getText().toString() + "," + _licensePlate.getText().toString() + "," + _standbyTime;
         else {
             onReserveFailed();
             return;
